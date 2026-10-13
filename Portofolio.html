@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Profil Saya</title>
+  <style>
+    /* Mode terang (warna awal) */
+    :root {
+      --page: #eef2f7;
+      --ink: #1b2a41;
+      --muted: #5c6b80;
+      --accent: #2d5be3;
+      --card: #ffffff;
+      --line: #d9e0ea;
+      --focus: #9db5f5;
+      --avatar-bg: #e3e9f3;
+    }
+
+    /* Mode gelap (navy) */
+    [data-theme="dark"] {
+      --page: linear-gradient(160deg, #070d1f 0%, #0f1b3d 100%);
+      --ink: #e6ebf7;
+      --muted: #8d9bc0;
+      --accent: #4f7cff;
+      --card: #111b3a;
+      --line: #223059;
+      --focus: #6f93ff;
+      --avatar-bg: #1a2750;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 32px 24px 80px;
+      background: var(--page) fixed;
+      color: var(--ink);
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+    }
+
+    .wrap { width: 100%; max-width: 520px; }
+
+    /* Tombol menu */
+    .menu {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .tab, .tema {
+      appearance: none;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--card);
+      color: var(--muted);
+      transition: background .15s, color .15s, transform .15s;
+    }
+
+    .tab:hover, .tema:hover { border-color: var(--accent); color: var(--ink); }
+    .tab:active, .tema:active { transform: scale(.97); }
+    .tab:focus-visible, .tema:focus-visible,
+    .kontak a:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    .tab[aria-selected="true"] {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .tema {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 10;
+      padding: 10px 16px;
+      font-size: .9rem;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, .18);
+    }
+
+    /* Panel isi */
+    .panel { display: none; }
+    .panel.aktif { display: block; animation: muncul .25s ease; }
+
+    @keyframes muncul {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .kartu {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 8px 22px;
+    }
+
+    /* Foto profil */
+    .foto {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 22px 0 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .avatar {
+      width: 124px;
+      height: 124px;
+      border-radius: 50%;
+      background: var(--avatar-bg);
+      border: 3px solid var(--accent);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .avatar img { width: 100%; height: 100%; object-fit: cover; display: none; }
+    .avatar.ada img { display: block; }
+    .avatar.ada svg { display: none; }
+    .avatar svg { width: 60%; height: 60%; fill: var(--muted); }
+
+
+    .baris { padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .baris:last-child { border-bottom: 0; }
+    .baris dt { font-size: .85rem; color: var(--muted); margin-bottom: 3px; }
+    .baris dd { font-weight: 600; line-height: 1.5; }
+
+    /* Skill */
+    .skill { padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .skill:last-child { border-bottom: 0; }
+    .skill-atas { display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 4px; }
+    .skill-atas span:last-child { color: var(--muted); font-weight: 400; }
+    .skill p { color: var(--muted); font-size: .92rem; line-height: 1.5; }
+    .bar { height: 6px; background: var(--line); border-radius: 99px; margin: 8px 0; overflow: hidden; }
+    .bar i { display: block; height: 100%; background: var(--accent); border-radius: 99px; }
+
+    /* Achievement */
+    .prestasi { padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .prestasi:last-child { border-bottom: 0; }
+    .prestasi strong { display: block; line-height: 1.4; }
+    .prestasi span { color: var(--muted); font-size: .9rem; }
+
+    /* Kontak */
+    .kontak a {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .kontak a:last-child { border-bottom: 0; }
+    .kontak a:hover strong { color: var(--accent); }
+    .kontak small { display: block; color: var(--muted); font-size: .85rem; }
+    .kontak strong { word-break: break-all; transition: color .15s; }
+    .kontak em { font-style: normal; color: var(--accent); font-weight: 600; white-space: nowrap; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .panel.aktif { animation: none; }
+      .tab, .tema { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <nav class="menu" role="tablist" aria-label="Menu profil">
+      <button class="tab" role="tab" id="tab-about" aria-selected="true" aria-controls="about">About Me</button>
+      <button class="tab" role="tab" id="tab-skill" aria-selected="false" aria-controls="skill">What I Can Do</button>
+      <button class="tab" role="tab" id="tab-achievement" aria-selected="false" aria-controls="achievement">Achievement</button>
+      <button class="tab" role="tab" id="tab-contact" aria-selected="false" aria-controls="contact">Contact</button>
+    </nav>
+
+    <!-- ABOUT ME (tampil pertama kali) -->
+    <section class="panel aktif" id="about" role="tabpanel" aria-labelledby="tab-about">
+      <div class="kartu">
+        <div class="foto">
+          <div class="avatar" id="avatar">
+            <img id="fotoProfil" src="foto.jpeg" alt="Foto profil">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4.4 0-8 2.2-8 5v3h16v-3c0-2.8-3.6-5-8-5z"/></svg>
+          </div>
+        </div>
+
+        <dl>
+          <div class="baris">
+            <dt>Nama</dt>
+            <dd>Reyfan Raffel Febiastian</dd>
+          </div>
+          <div class="baris">
+            <dt>NIM</dt>
+            <dd>26050974057</dd>
+          </div>
+          <div class="baris">
+            <dt>Prodi</dt>
+            <dd>Pendidikan Teknologi Informasi</dd>
+          </div>
+          <div class="baris">
+            <dt>Pendidikan</dt>
+            <dd>SMA Negeri 3 Sidoarjo (lulus 2024)<br>Universitas Negeri Surabaya (2024 – sekarang)</dd>
+          </div>
+          <div class="baris">
+            <dt>Aktivitas</dt>
+            <dd>belajar pemrograman web, dan mengerjakan proyek kampus.</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- WHAT I CAN DO -->
+    <section class="panel" id="skill" role="tabpanel" aria-labelledby="tab-skill">
+      <div class="kartu">
+        <div class="skill">
+          <div class="skill-atas"><span>Web Development</span><span>dasar</span></div>
+          <div class="bar"><i style="width:25%"></i></div>
+          <p>Membuat halaman web responsif dengan HTML, CSS, dan JavaScript.</p>
+        </div>
+        <div class="skill">
+          <div class="skill-atas"><span>Pemrograman</span><span>Dasar</span></div>
+          <div class="bar"><i style="width:30%"></i></div>
+          <p>Menulis program dengan Python tugas dan proyek kuliah.</p>
+        </div>
+        <div class="skill">
+          <div class="skill-atas"><span>Database</span><span>Dasar</span></div>
+          <div class="bar"><i style="width:25%"></i></div>
+          <p>Merancang tabel dan menulis query SQL dengan MySQL.</p>
+        </div>
+        <div class="skill">
+          <div class="skill-atas"><span>Kerja Tim &amp; Komunikasi</span><span>Baik</span></div>
+          <div class="bar"><i style="width:80%"></i></div>
+          <p>Terbiasa bekerja dalam kelompok dan mempresentasikan hasil kerja.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACHIEVEMENT -->
+    <section class="panel" id="achievement" role="tabpanel" aria-labelledby="tab-achievement">
+      <div class="kartu">
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="panel" id="contact" role="tabpanel" aria-labelledby="tab-contact">
+      <div class="kartu kontak">
+        <a href="mailto:emailkamu@gmail.com">
+          <div><small>Email</small><strong>reyfanraffelfebiastian@gmail.com</strong></div>
+          <em>Kirim email</em>
+        </a>
+        <a href="https://github.com/ReyfanRaffelFeb" target="_blank" rel="noopener">
+          <div><small>GitHub</small><strong>github.com/ReyfanRaffelFeb</strong></div>
+          <em>Buka</em>
+        </a>
+        <a href="https://www.linkedin.com/in/reyfan-raffel-228101441?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noopener">
+          <div><small>LinkedIn</small><strong>https://www.linkedin.com/in/reyfan-raffel-228101441?utm_source=share_via&utm_content=profile&utm_medium=member_android</strong></div>
+          <em>Buka</em>
+        </a>
+        <a href="CV Reyfan Raffel Febsiastian" target="_blank" rel="noopener">
+          <div><small>CV</small><strong>https://drive.google.com/drive/folders/1caNO9yHY8lrWnlyxN2P6-rI3YZgSnvSA</strong></div>
+          <em>Buka</em>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <button class="tema" id="tombolTema" type="button" aria-label="Ganti mode tampilan">🌙 Dark</button>
+
+  <script>
+    /* ---------- Menu ---------- */
+    const tabs = document.querySelectorAll(".tab");
+    const panels = document.querySelectorAll(".panel");
+
+    function tampilkan(idPanel) {
+      tabs.forEach(t => t.setAttribute("aria-selected", t.getAttribute("aria-controls") === idPanel));
+      panels.forEach(p => p.classList.toggle("aktif", p.id === idPanel));
+    }
+    tabs.forEach(t => t.addEventListener("click", () => tampilkan(t.getAttribute("aria-controls"))));
+
+    /* ---------- Light / Dark mode ---------- */
+    const root = document.documentElement;
+    const tombolTema = document.getElementById("tombolTema");
+
+    function setTema(tema) {
+      root.setAttribute("data-theme", tema);
+      tombolTema.textContent = tema === "dark" ? "☀️ Light" : "🌙 Dark";
+      try { localStorage.setItem("tema", tema); } catch (e) {}
+    }
+
+    let temaTersimpan = "light";
+    try { temaTersimpan = localStorage.getItem("tema") || "light"; } catch (e) {}
+    setTema(temaTersimpan);
+
+    tombolTema.addEventListener("click", () => {
+      setTema(root.getAttribute("data-theme") === "dark" ? "light" : "dark");
+    });
+
+    /* ---------- Foto profil (dari file foto.jpg) ---------- */
+    const avatar = document.getElementById("avatar");
+    const fotoProfil = document.getElementById("fotoProfil");
+
+    function cekFoto() {
+      avatar.classList.toggle("ada", fotoProfil.complete && fotoProfil.naturalWidth > 0);
+    }
+    fotoProfil.addEventListener("load", cekFoto);
+    fotoProfil.addEventListener("error", () => avatar.classList.remove("ada"));
+    cekFoto();
+  </script>
+</body>
+</html>
